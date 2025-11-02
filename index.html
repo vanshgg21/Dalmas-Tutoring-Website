@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DALMAS House Tutoring - Term 4</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .info-banner {
+            background: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #0ea5e9;
+        }
+
+        .info-banner p {
+            font-size: 1.05em;
+            color: #334155;
+            margin: 5px 0;
+        }
+
+        .info-banner a {
+            color: #0284c7;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .info-banner a:hover {
+            text-decoration: underline;
+        }
+
+        .day-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 30px 20px;
+            background: #f1f5f9;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            background: white;
+            color: #334155;
+            border: 2px solid #cbd5e1;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .day-btn:hover {
+            background: #e0f2fe;
+            border-color: #0ea5e9;
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            border-color: #0284c7;
+        }
+
+        .day-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-title {
+            text-align: center;
+            color: #0284c7;
+            font-size: 2em;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .session-card {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .session-card:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .session-card.full {
+            border-color: #cbd5e1;
+            opacity: 0.7;
+        }
+
+        .session-card.full:hover {
+            border-color: #cbd5e1;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .session-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f87171;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.75em;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .session-card.full .time-badge {
+            background: #94a3b8;
+        }
+
+        .time-badge {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .tutor-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .subjects {
+            color: #64748b;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .book-btn[disabled],
+        .book-btn.disabled {
+            background: #cbd5e1;
+            color: #475569;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .book-btn:not([disabled]):hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: #0284c7;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .session-info {
+            background: #e0f2fe;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0284c7;
+        }
+
+        .session-info p {
+            color: #0c4a6e;
+            margin: 5px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .submit-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #94a3b8;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            background: #64748b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #22c55e;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .day-nav {
+                padding: 20px 10px;
+            }
+
+            .day-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            .sessions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DALMAS INTERHOUSE TUTORING</h1>
+            <p>Term 4 Schedule</p>
+        </div>
+
+        <div class="info-banner">
+            <p><strong>⚠️ Bookings are restricted to 2 per person ⚠️</strong></p>
+            <p>Want to become a tutor? <a href="https://forms.gle/LDh56LsVuT2PBYrq9" target="_blank">Sign up here</a></p>
+        </div>
+
+        <div class="day-nav">
+            <button class="day-btn active" data-day="monday" onclick="showDay('monday')">Monday</button>
+            <button class="day-btn" data-day="tuesday" onclick="showDay('tuesday')">Tuesday</button>
+            <button class="day-btn" data-day="wednesday" onclick="showDay('wednesday')">Wednesday</button>
+            <button class="day-btn" data-day="thursday" onclick="showDay('thursday')">Thursday</button>
+            <button class="day-btn" data-day="friday" onclick="showDay('friday')">Friday</button>
+        </div>
+
+        <div id="schedule-container">
+            <div class="loading">Loading schedule...</div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Book Tutoring Session</h2>
+            </div>
+            
+            <div id="formMessage"></div>
+            
+            <div class="session-info" id="sessionInfo"></div>
+
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="studentName">Your Name *</label>
+                    <input type="text" id="studentName" name="studentName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentEmail">Email Address *</label>
+                    <input type="email" id="studentEmail" name="studentEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="yearLevel">Year Level *</label>
+                    <select id="yearLevel" name="yearLevel" required>
+                        <option value="">Select your year</option>
+                        <option value="Year 7">Year 7</option>
+                        <option value="Year 8">Year 8</option>
+                        <option value="Year 9">Year 9</option>
+                        <option value="Year 10">Year 10</option>
+                        <option value="Year 11">Year 11</option>
+                        <option value="Year 12">Year 12</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject Needed *</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Additional Notes (Optional)</label>
+                    <textarea id="notes" name="notes" placeholder="Any specific topics or questions?"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">Confirm Booking</button>
+                </div>
+                <p id="msg" class="form-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION - REPLACE WITH YOUR EMAILJS DETAILS
+        // ========================================
+        
+        const RECIPIENT_EMAIL = 'gupta_va@student.kings.edu.au';
+        
+        // Get these from EmailJS dashboard at https://www.emailjs.com
+        const EMAILJS_PUBLIC_KEY = 'eFQGzNpxcg7ZYRjOm';  // From Account → General
+        const EMAILJS_SERVICE_ID = 'service_ydet0kf';  // From Email Services
+        const EMAILJS_TEMPLATE_ID = 'template_xqmc9gd'; // From Email Templates
+
+        // ========================================
+        // DATA STRUCTURE
+        // ========================================
+
+        const ALL_YEAR_OPTIONS = ['Year 7','Year 8','Year 9','Year 10','Year 11','Year 12'];
+
+        // Mark any session with available: false (and optional status message) to block bookings.
+        let scheduleData = {
+            monday: [
+                { time: '08:00 - 08:50', tutor: 'Brandon Shi', subjects: 'English, History, Geography (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] },
+                { time: 'Recess', tutor: 'Jack He', subjects: 'History, Geography, PDHPE, English, SOR (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Aditya Verma', subjects: 'English, Maths (E1), Maths (Adv), Science (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Noah Dean', subjects: 'English, History, German (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] }
+            ],
+            tuesday: [
+                { time: '08:00 - 08:50', tutor: 'Brandon Liu', subjects: 'Maths (E1), Maths (Adv), Bio, Physics, Chemistry (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Tommy Irwin', subjects: 'Agriculture, Construction, Primary Industries, Woodwork, English (Std)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11','Year 12'] },
+                { time: 'Recess', tutor: 'Vansh Gupta', subjects: 'History, Geography, French, Science, Commerce, Interactive Media (Yr 7-9)', allowedYears: ['Year 7','Year 8','Year 9'] },
+                { time: 'Recess', tutor: 'Brandon Shi', subjects: 'English, History, Geography (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] }
+            ],
+            wednesday: [
+                { time: '08:00 - 08:50', tutor: 'Vansh Gupta', subjects: 'History, Geography, French, Science, Commerce, Interactive Media (Yr 7-9)', allowedYears: ['Year 7','Year 8','Year 9'] },
+                { time: 'Recess', tutor: 'Brandon Liu', subjects: 'Maths (E1), Maths (Adv), Bio, Physics, Chemistry (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Aditya Verma', subjects: 'English, Maths (E1), Maths (Adv), Science (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Neel Vallabhaneni', subjects: 'English, History, Geography, Drama (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] }
+            ],
+            thursday: [
+                { time: '08:00 - 08:50', tutor: 'Brandon Liu', subjects: 'Maths (E1), Maths (Adv), Bio, Physics, Chemistry (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Noah Dean', subjects: 'English, History, German (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Abdullah Sheraz', subjects: 'English, History, Geography (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] },
+                { time: 'Recess', tutor: 'Tommy Irwin', subjects: 'Agriculture, Construction, Primary Industries, Woodwork, English (Std)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11','Year 12'] }
+            ],
+            friday: [
+                { time: '08:00 - 08:50', tutor: 'Mohak Moun', subjects: 'Contact for subject details', allowedYears: ALL_YEAR_OPTIONS },
+                { time: 'Recess', tutor: 'Aditya Verma', subjects: 'English, Maths (E1), Maths (Adv), Science (Yr 7-11)', allowedYears: ['Year 7','Year 8','Year 9','Year 10','Year 11'] },
+                { time: 'Recess', tutor: 'Brandon Shi', subjects: 'English, History, Geography (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] },
+                { time: 'Recess ', tutor: 'Neel Vallabhaneni', subjects: 'English, History, Geography, Drama (Yr 7-10)', allowedYears: ['Year 7','Year 8','Year 9','Year 10'] }
+            ]
+        };
+
+        let currentBooking = null;
+        let activeDay = 'monday';
+
+        const BOOKING_STORAGE_KEY = '';
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function getCurrentWeekKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-W${getWeekNumber(now)}`;
+        }
+
+        function loadBookingLocks() {
+            const currentWeek = getCurrentWeekKey();
+            try {
+                const stored = window.localStorage.getItem(BOOKING_STORAGE_KEY);
+                if (!stored) {
+                    return { week: currentWeek, slots: {} };
+                }
+                const parsed = JSON.parse(stored);
+                if (!parsed || parsed.week !== currentWeek || typeof parsed.slots !== 'object') {
+                    return { week: currentWeek, slots: {} };
+                }
+                return parsed;
+            } catch (error) {
+                console.warn('Booking lock storage unavailable, falling back to in-memory:', error);
+                return { week: currentWeek, slots: {} };
+            }
+        }
+
+        let bookingLocks = loadBookingLocks();
+
+        function persistBookingLocks() {
+            try {
+                window.localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookingLocks));
+            } catch (error) {
+                console.warn('Unable to persist booking locks:', error);
+            }
+        }
+
+        function resetLocksIfNeeded() {
+            const currentWeek = getCurrentWeekKey();
+            if (bookingLocks.week !== currentWeek) {
+                bookingLocks = { week: currentWeek, slots: {} };
+                persistBookingLocks();
+            }
+        }
+
+        function getSlotId(day, time, tutor) {
+            return `${day}|${time}|${tutor}`;
+        }
+
+        function isSlotLocked(day, time, tutor) {
+            resetLocksIfNeeded();
+            const slotId = getSlotId(day, time, tutor);
+            return Boolean(bookingLocks.slots[slotId]);
+        }
+
+        function lockSlot(day, time, tutor, details) {
+            resetLocksIfNeeded();
+            const slotId = getSlotId(day, time, tutor);
+            bookingLocks.slots[slotId] = {
+                bookedAt: new Date().toISOString(),
+                ...details
+            };
+            persistBookingLocks();
+        }
+
+        // ========================================
+        // INITIALIZE EMAILJS
+        // ========================================
+
+        function loadSchedule() {
+            // Initialize EmailJS with your public key
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+            renderSchedule();
+        }
+
+        // ========================================
+        // RENDER FUNCTIONS
+        // ========================================
+
+        function renderSchedule() {
+            resetLocksIfNeeded();
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+
+            Object.keys(scheduleData).forEach(day => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = `day-content ${day === activeDay ? 'active' : ''}`;
+                dayDiv.id = `${day}-content`;
+
+                dayDiv.innerHTML = `
+                    <h2 class="day-title">${day.charAt(0).toUpperCase() + day.slice(1)}</h2>
+                    <div class="sessions-grid">
+                        ${scheduleData[day].map(session => {
+                            const isManualBlock = session.available === false;
+                            const isLocked = !isManualBlock && isSlotLocked(day, session.time, session.tutor);
+                            const isAvailable = !isManualBlock && !isLocked;
+                            const allowedYears = Array.isArray(session.allowedYears) ? session.allowedYears : [];
+                            const statusLabel = isManualBlock
+                                ? (session.status || 'Unavailable')
+                                : 'Booked This Week';
+                            const statusText = statusLabel
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;');
+                            const dayAttr = encodeURIComponent(day);
+                            const timeAttr = encodeURIComponent(session.time);
+                            const tutorAttr = encodeURIComponent(session.tutor);
+                            const subjectsAttr = encodeURIComponent(session.subjects);
+                            const statusAttr = encodeURIComponent(isAvailable ? '' : statusLabel);
+                            const manualAttr = isManualBlock ? 'true' : 'false';
+                            const lockedAttr = isLocked ? 'true' : 'false';
+                            const yearsAttr = allowedYears.length ? encodeURIComponent(allowedYears.join('|')) : '';
+                            return `
+                                <div class="session-card ${isAvailable ? '' : 'full'}">
+                                    <div class="time-badge">${session.time}</div>
+                                    ${isAvailable ? '' : `<div class="session-status">${statusText}</div>`}
+                                    <div class="tutor-name">${session.tutor}</div>
+                                    <div class="subjects">${session.subjects}</div>
+                                    <button
+                                        class="book-btn${isAvailable ? '' : ' disabled'}"
+                                        ${isAvailable ? '' : 'disabled'}
+                                        data-day="${dayAttr}"
+                                        data-time="${timeAttr}"
+                                        data-tutor="${tutorAttr}"
+                                        data-subjects="${subjectsAttr}"
+                                        data-available="${isAvailable}"
+                                        data-locked="${lockedAttr}"
+                                        data-manual="${manualAttr}"
+                                        data-status="${statusAttr}"
+                                        data-years="${yearsAttr}"
+                                        onclick="handleBookingClick(this)"
+                                    >${isAvailable ? 'Book Session' : statusText}</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+
+                container.appendChild(dayDiv);
+            });
+        }
+
+        // ========================================
+        // DAY NAVIGATION
+        // ========================================
+
+        function showDay(day) {
+            activeDay = day;
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.day === day);
+            });
+
+            document.querySelectorAll('.day-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            const activeContent = document.getElementById(`${day}-content`);
+            if (activeContent) {
+                activeContent.classList.add('active');
+            }
+        }
+
+        // ========================================
+        // BOOKING MODAL
+        // ========================================
+
+        function decodeAttr(value) {
+            return value ? decodeURIComponent(value) : '';
+        }
+
+        function setYearLevelOptions(allowedYears) {
+            const select = document.getElementById('yearLevel');
+            if (!select) {
+                return;
+            }
+            const options = Array.isArray(allowedYears) && allowedYears.length ? allowedYears : ALL_YEAR_OPTIONS;
+            const previous = select.value;
+            select.innerHTML = '<option value="">Select your year</option>';
+            options.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                select.appendChild(option);
+            });
+            if (options.includes(previous)) {
+                select.value = previous;
+            }
+        }
+
+        function handleBookingClick(button) {
+            const sessionData = {
+                day: decodeAttr(button.dataset.day),
+                time: decodeAttr(button.dataset.time),
+                tutor: decodeAttr(button.dataset.tutor),
+                subjects: decodeAttr(button.dataset.subjects),
+                manualBlocked: button.dataset.manual === 'true',
+                locked: button.dataset.locked === 'true',
+                available: button.dataset.available !== 'false',
+                status: decodeAttr(button.dataset.status),
+                allowedYears: (() => {
+                    const raw = decodeAttr(button.dataset.years);
+                    if (!raw) return null;
+                    return raw.split('|').map(item => item.trim()).filter(Boolean);
+                })()
+            };
+            sessionData.day = sessionData.day.toLowerCase();
+
+            if (sessionData.manualBlocked) {
+                alert(sessionData.status || 'This session is not available at the moment.');
+                return;
+            }
+
+            if (isSlotLocked(sessionData.day, sessionData.time, sessionData.tutor)) {
+                alert('This session has already been booked this week. Please choose another time.');
+                renderSchedule();
+                return;
+            }
+
+            sessionData.available = true;
+            openBookingModal(sessionData);
+        }
+
+        function openBookingModal(sessionData) {
+            if (!sessionData) {
+                alert('Unable to load session details. Please try another slot.');
+                return;
+            }
+
+            if (sessionData.manualBlocked) {
+                alert(sessionData.status || 'This session is not available at the moment.');
+                return;
+            }
+
+            if (isSlotLocked(sessionData.day, sessionData.time, sessionData.tutor)) {
+                alert('This session has already been booked this week. Please select another time.');
+                renderSchedule();
+                return;
+            }
+
+            if (sessionData.available === false) {
+                const statusMessage = sessionData.status || 'This session is not available at the moment.';
+                alert(statusMessage);
+                return;
+            }
+            currentBooking = {
+                ...sessionData,
+                slotId: getSlotId(sessionData.day, sessionData.time, sessionData.tutor),
+                allowedYears: sessionData.allowedYears
+            };
+
+            setYearLevelOptions(sessionData.allowedYears);
+            
+            const sessionInfo = document.getElementById('sessionInfo');
+            sessionInfo.innerHTML = `
+                <p><strong>Day:</strong> ${sessionData.day.charAt(0).toUpperCase() + sessionData.day.slice(1)}</p>
+                <p><strong>Time:</strong> ${sessionData.time}</p>
+                <p><strong>Tutor:</strong> ${sessionData.tutor}</p>
+                <p><strong>Subjects:</strong> ${sessionData.subjects}</p>
+            `;
+
+            document.getElementById('formMessage').innerHTML = '';
+            document.getElementById('bookingModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            document.getElementById('bookingForm').reset();
+            document.getElementById('formMessage').innerHTML = '';
+            currentBooking = null;
+            setYearLevelOptions();
+        }
+
+        // ========================================
+        // EMAIL FUNCTIONALITY WITH EMAILJS + BACKUP
+        // ========================================
+
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('formMessage');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            messageDiv.innerHTML = '';
+
+            if (!currentBooking || currentBooking.available === false) {
+                messageDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>❌ Session Unavailable</strong><br>
+                        This time slot is no longer accepting bookings. Please select another session.
+                    </div>
+                `;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+                return;
+            }
+
+            if (isSlotLocked(currentBooking.day, currentBooking.time, currentBooking.tutor)) {
+                messageDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>❌ Session Already Booked</strong><br>
+                        Another student reserved this slot while you were filling the form. Please choose a different time.
+                    </div>
+                `;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+                renderSchedule();
+                return;
+            }
+
+            const formData = new FormData(this);
+            const bookingData = {
+                to_email: RECIPIENT_EMAIL,
+                day: currentBooking.day.charAt(0).toUpperCase() + currentBooking.day.slice(1),
+                time: currentBooking.time,
+                tutor: currentBooking.tutor,
+                subjects: currentBooking.subjects,
+                studentName: formData.get('studentName'),
+                studentEmail: formData.get('studentEmail'),
+                yearLevel: formData.get('yearLevel'),
+                subject: formData.get('subject'),
+                notes: formData.get('notes') || 'None',
+                timestamp: new Date().toLocaleString()
+            };
+            const emailSubject = `Tutoring Booking - ${bookingData.day} ${bookingData.time}`;
+            const emailBody = `
+TUTORING BOOKING REQUEST
+
+Day: ${bookingData.day}
+Time: ${bookingData.time}
+Tutor: ${bookingData.tutor}
+Subjects: ${bookingData.subjects}
+
+Student Name: ${bookingData.studentName}
+Student Email: ${bookingData.studentEmail}
+Year Level: ${bookingData.yearLevel}
+Subject Needed: ${bookingData.subject}
+Notes: ${bookingData.notes}
+
+Booking Time: ${bookingData.timestamp}
+            `.trim();
+            const templateParams = {
+                to_email: bookingData.to_email,
+                reply_to: bookingData.studentEmail,
+                subject: emailSubject,
+                message: emailBody,
+                student_name: bookingData.studentName,
+                student_email: bookingData.studentEmail,
+                year_level: bookingData.yearLevel,
+                requested_subject: bookingData.subject,
+                notes: bookingData.notes,
+                session_day: bookingData.day,
+                session_time: bookingData.time,
+                tutor_name: bookingData.tutor,
+                subjects_offered: bookingData.subjects,
+                submitted_at: bookingData.timestamp
+            };
+            bookingData.emailSubject = emailSubject;
+            bookingData.emailBody = emailBody;
+            bookingData.detailsText = emailBody;
+
+            // Check if EmailJS is configured
+            if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY_HERE' || 
+                EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID_HERE' || 
+                EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID_HERE') {
+                
+                // Show booking details that can be copied
+                messageDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>⚠️ EmailJS Not Set Up Yet</strong><br><br>
+                        <strong>Your Booking Details:</strong><br>
+                        📅 Day: ${bookingData.day}<br>
+                        🕐 Time: ${bookingData.time}<br>
+                        👨‍🏫 Tutor: ${bookingData.tutor}<br>
+                        📚 Subject: ${bookingData.subject}<br>
+                        👤 Name: ${bookingData.studentName}<br>
+                        📧 Email: ${bookingData.studentEmail}<br>
+                        🎓 Year: ${bookingData.yearLevel}<br>
+                        📝 Notes: ${bookingData.notes}<br><br>
+                        <button onclick="copyBookingDetails()" style="background:#0284c7;color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;margin-top:10px;">
+                            📋 Copy Details
+                        </button>
+                        <button onclick="sendManualEmail()" style="background:#0284c7;color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;margin-top:10px;margin-left:5px;">
+                            ✉️ Open Email
+                        </button>
+                    </div>
+                `;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+                
+                // Store booking data globally for manual functions
+                window.currentBookingData = bookingData;
+                return;
+            }
+
+            try {
+                // Send email using EmailJS
+                console.log('Attempting to send email with data:', bookingData);
+
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
+                );
+
+                console.log('Email sent successfully!', response);
+                lockSlot(
+                    currentBooking.day,
+                    currentBooking.time,
+                    currentBooking.tutor,
+                    {
+                        studentName: bookingData.studentName,
+                        studentEmail: bookingData.studentEmail
+                    }
+                );
+                currentBooking.available = false;
+                currentBooking.locked = true;
+                renderSchedule();
+
+                messageDiv.innerHTML = `
+                    <div class="success-message">
+                        ✅ <strong>Booking Confirmed!</strong><br>
+                        An email has been sent to ${RECIPIENT_EMAIL}<br>
+                        You will receive a confirmation shortly.
+                    </div>
+                `;
+
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    closeModal();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Email send failed:', error);
+                
+                // Show detailed error and backup options
+                messageDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>❌ Email Failed to Send</strong><br>
+                        Error: ${error.text || error.message || 'Unknown error'}<br><br>
+                        <strong>Don't worry! Here are your booking details:</strong><br>
+                        📅 Day: ${bookingData.day}<br>
+                        🕐 Time: ${bookingData.time}<br>
+                        👨‍🏫 Tutor: ${bookingData.tutor}<br>
+                        📚 Subject: ${bookingData.subject}<br>
+                        👤 Name: ${bookingData.studentName}<br>
+                        📧 Email: ${bookingData.studentEmail}<br>
+                        🎓 Year: ${bookingData.yearLevel}<br>
+                        📝 Notes: ${bookingData.notes}<br><br>
+                        <button onclick="copyBookingDetails()" style="background:#0284c7;color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;margin-top:10px;">
+                            📋 Copy Details
+                        </button>
+                        <button onclick="sendManualEmail()" style="background:#0284c7;color:white;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;margin-top:10px;margin-left:5px;">
+                            ✉️ Open Email
+                        </button>
+                    </div>
+                `;
+                
+                // Store booking data globally for manual functions
+                window.currentBookingData = bookingData;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+            }
+        });
+
+        // ========================================
+        // BACKUP MANUAL FUNCTIONS
+        // ========================================
+
+        function copyBookingDetails() {
+            const data = window.currentBookingData;
+            const text = (data && data.detailsText) ? data.detailsText : `
+TUTORING BOOKING REQUEST
+
+Day: ${data?.day || ''}
+Time: ${data?.time || ''}
+Tutor: ${data?.tutor || ''}
+Subjects: ${data?.subjects || ''}
+
+Student Name: ${data?.studentName || ''}
+Student Email: ${data?.studentEmail || ''}
+Year Level: ${data?.yearLevel || ''}
+Subject Needed: ${data?.subject || ''}
+Notes: ${data?.notes || ''}
+
+Booking Time: ${data?.timestamp || ''}
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Booking details copied to clipboard!\n\nYou can now paste this into an email to ' + RECIPIENT_EMAIL);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('✅ Booking details copied to clipboard!');
+            });
+        }
+
+        function sendManualEmail() {
+            const data = window.currentBookingData;
+            const subject = data?.emailSubject || `Tutoring Booking - ${data?.day || ''} ${data?.time || ''}`.trim();
+            const body = data?.emailBody ? data.emailBody : `
+TUTORING BOOKING REQUEST
+
+Day: ${data?.day || ''}
+Time: ${data?.time || ''}
+Tutor: ${data?.tutor || ''}
+Subjects: ${data?.subjects || ''}
+
+Student Name: ${data?.studentName || ''}
+Student Email: ${data?.studentEmail || ''}
+Year Level: ${data?.yearLevel || ''}
+Subject Needed: ${data?.subject || ''}
+Notes: ${data?.notes || ''}
+
+Booking Time: ${data?.timestamp || ''}
+            `.trim();
+
+            const mailtoLink = `mailto:${RECIPIENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ========================================
+        // INITIALIZE
+        // ========================================
+
+        window.onload = function() {
+            setYearLevelOptions();
+            loadSchedule();
+        };
+    </script>
+</body>
+</html>
